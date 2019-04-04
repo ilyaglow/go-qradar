@@ -41,11 +41,11 @@ func (a *ArielService) NewSearchResultsScroller(ctx context.Context, searchID st
 // Next returns true if an event is still available to be consumed by the
 // Result() method.
 func (s *SearchResultsScroller) Next(ctx context.Context) bool {
-	if s.currIdx-s.startIdx == len(s.events) && len(s.events) < s.window {
+	if len(s.events) < s.window && s.currIdx-s.startIdx == len(s.events) {
 		return false
 	}
 
-	if s.currIdx-s.startIdx > len(s.events) && len(s.events) == s.window {
+	if s.currIdx-s.startIdx == len(s.events) && len(s.events) == s.window {
 		s.startIdx += s.window
 		err := s.getEvents(ctx)
 		if err != nil {
