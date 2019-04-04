@@ -38,6 +38,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Println(scroller.Length())
+
 	for scroller.Next(context.Background()) {
 		log.Println(scroller.Result())
 	}

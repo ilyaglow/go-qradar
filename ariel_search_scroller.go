@@ -11,7 +11,7 @@ var SearchResultsWindow = 50
 
 // SearchResultsScroller represents a scroller for the results of the query.
 type SearchResultsScroller struct {
-	Count             int
+	count             int
 	client            *Client
 	searchID          string
 	startIdx, currIdx int
@@ -24,7 +24,7 @@ func (a *ArielService) NewSearchResultsScroller(ctx context.Context, searchID st
 	_, num, err := a.SearchStatus(ctx, searchID)
 
 	srs := &SearchResultsScroller{
-		Count:    num,
+		count:    num,
 		window:   SearchResultsWindow,
 		client:   a.client,
 		searchID: searchID,
@@ -85,4 +85,9 @@ func (s *SearchResultsScroller) Result() Event {
 	s.currIdx++
 	return event
 
+}
+
+// Length returns the overall events count.
+func (s *SearchResultsScroller) Length() int {
+	return s.count
 }
