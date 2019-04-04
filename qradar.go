@@ -1,4 +1,5 @@
 // Package qradar provides an API client for the QRadar API.
+// See examples of the usage in the examples folder.
 package qradar
 
 import (
