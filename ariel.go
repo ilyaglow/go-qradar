@@ -61,7 +61,9 @@ type SearchColumn struct {
 	ProviderName    string `json:"provider_name"`
 }
 
-func (a *ArielService) searchByQuery(ctx context.Context, sqlQuery string) (*Search, error) {
+// SearchByQuery events in the QRadar API.
+// It's caller responsibility to wait for results and get the final data.
+func (a *ArielService) SearchByQuery(ctx context.Context, sqlQuery string) (*Search, error) {
 	req, err := a.client.NewRequest("POST", arielSearchAPIPrefix, nil)
 	if err != nil {
 		return nil, err
@@ -113,8 +115,8 @@ func (a *ArielService) SearchMetadata(ctx context.Context, searchID string) (*Se
 	return &s, nil
 }
 
-// waitForSearchID returns amount of records and the error.
-func (a *ArielService) waitForSearchID(ctx context.Context, searchID string, status JobStatus, seconds int) (int, error) {
+// WaitForSearchID returns amount of records and the error.
+func (a *ArielService) WaitForSearchID(ctx context.Context, searchID string, status JobStatus, seconds int) (int, error) {
 	ticker := time.NewTicker(time.Duration(seconds) * time.Second)
 	for {
 		select {
@@ -133,29 +135,4 @@ func (a *ArielService) waitForSearchID(ctx context.Context, searchID string, sta
 			}
 		}
 	}
-}
-
-// SearchByQuery searches events in the QRadar API by SQL query.
-func (a *ArielService) SearchByQuery(ctx context.Context, sqlQuery string) (*SearchResultsScroller, *SearchMetadata, error) {
-	s, err := a.searchByQuery(ctx, sqlQuery)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	_, err = a.waitForSearchID(ctx, s.SearchID, StatusCompleted, 2)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	meta, err := a.SearchMetadata(ctx, s.SearchID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	srs, err := a.NewSearchResultsScroller(ctx, s.SearchID)
-	if err != nil {
-		return nil, meta, err
-	}
-
-	return srs, meta, nil
 }

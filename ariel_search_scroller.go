@@ -86,3 +86,29 @@ func (s *SearchResultsScroller) Result() Event {
 func (s *SearchResultsScroller) Length() int {
 	return s.count
 }
+
+// ScrollByQuery events in the QRadar API.
+// Recommended way to retrieve large amount of events.
+func (a *ArielService) ScrollByQuery(ctx context.Context, sqlQuery string) (*SearchResultsScroller, *SearchMetadata, error) {
+	s, err := a.SearchByQuery(ctx, sqlQuery)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	_, err = a.WaitForSearchID(ctx, s.SearchID, StatusCompleted, 2)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	meta, err := a.SearchMetadata(ctx, s.SearchID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	srs, err := a.NewSearchResultsScroller(ctx, s.SearchID)
+	if err != nil {
+		return nil, meta, err
+	}
+
+	return srs, meta, nil
+}
