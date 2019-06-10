@@ -51,8 +51,9 @@ type Client struct {
 
 	common service
 
-	Ariel *ArielService
-	SIEM  *SIEMService
+	Ariel  *ArielService
+	SIEM   *SIEMService
+	Config *ConfigService
 }
 
 type service struct {
@@ -74,6 +75,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.common.client = c
 	c.Ariel = (*ArielService)(&c.common)
 	c.SIEM = (*SIEMService)(&c.common)
+	c.Config = (*ConfigService)(&c.common)
 
 	for _, f := range opts {
 		err := f(c)
