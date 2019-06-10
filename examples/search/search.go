@@ -30,15 +30,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	scroller, _, err := qr.Ariel.SearchByQuery(
+	scroller, _, err := qr.Ariel.ScrollByQuery(
 		context.Background(),
 		*query,
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println(scroller.Length())
 
 	for scroller.Next(context.Background()) {
 		log.Println(scroller.Result())
