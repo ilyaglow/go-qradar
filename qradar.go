@@ -73,6 +73,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	}
 	c.common.client = c
 	c.Ariel = (*ArielService)(&c.common)
+	c.SIEM = (*SIEMService)(&c.common)
 
 	for _, f := range opts {
 		err := f(c)
@@ -191,7 +192,7 @@ func CheckResponse(r *http.Response) error {
 	switch r.StatusCode {
 	case http.StatusOK, http.StatusCreated:
 		return nil
-	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusInternalServerError, http.StatusServiceUnavailable:
+	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusInternalServerError, http.StatusServiceUnavailable, http.StatusForbidden:
 		var v ErrorMessage
 		err := json.NewDecoder(r.Body).Decode(&v)
 		if err != nil {
