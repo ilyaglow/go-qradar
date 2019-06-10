@@ -1,7 +1,18 @@
 package qradar
 
-// Offense represent QRadar's generated offense.
-type Offense []struct {
+import (
+	"context"
+	"fmt"
+)
+
+const offensesAPIPrefix = "api/siem/offenses"
+
+// SIEMService handles communication with siem path-related methods of the
+// QRadar API.
+type SIEMService service
+
+// Offense represents QRadar's generated offense.
+type Offense struct {
 	UsernameCount int    `json:"username_count,omitempty"`
 	Description   string `json:"description,omitempty"`
 	Rules         []struct {
@@ -40,4 +51,27 @@ type Offense []struct {
 	LocalDestinationAddressIds []int    `json:"local_destination_address_ids,omitempty"`
 	LocalDestinationCount      int      `json:"local_destination_count,omitempty"`
 	Status                     string   `json:"status,omitempty"`
+}
+
+// Offenses of the QRadar that could be filtered or paged.
+func (s *SIEMService) Offenses(ctx context.Context, fields string, filter string, from int, to int) ([]Offense, error) {
+	req, err := s.client.NewRequest("GET", offensesAPIPrefix, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Range", fmt.Sprintf("items=%d-%d", from, to))
+
+	q := req.URL.Query()
+	q.Add("fields", fields)
+	q.Add("filter", filter)
+	req.URL.RawQuery = q.Encode()
+
+	var ofs []Offense
+	_, err = s.client.Do(ctx, req, &ofs)
+	if err != nil {
+		return nil, err
+	}
+
+	return ofs, nil
 }

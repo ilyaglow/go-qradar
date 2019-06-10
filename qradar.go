@@ -52,6 +52,7 @@ type Client struct {
 	common service
 
 	Ariel *ArielService
+	SIEM  *SIEMService
 }
 
 type service struct {
