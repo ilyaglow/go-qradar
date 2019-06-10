@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	libraryVersion = "0.1.0"
+	libraryVersion = "0.2.0"
 	apiVersion     = "10.0"
 	userAgent      = "go-qradar/" + libraryVersion
 )
@@ -163,6 +163,11 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 	}
 	defer resp.Body.Close()
 
+	err = CheckResponse(resp)
+	if err != nil {
+		return resp, err
+	}
+
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
 			io.Copy(w, resp.Body)
@@ -178,4 +183,48 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 	}
 
 	return resp, err
+}
+
+// CheckResponse checks the API response for errors.
+func CheckResponse(r *http.Response) error {
+	switch r.StatusCode {
+	case http.StatusOK, http.StatusCreated:
+		return nil
+	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusInternalServerError, http.StatusServiceUnavailable:
+		var v ErrorMessage
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, err.Error())
+		}
+		v.resp = r
+		return &v
+	default:
+		return fmt.Errorf("%s %d: unknown error", r.Request.URL.Path, r.StatusCode)
+	}
+}
+
+// ErrorMessage represents generic error message by the QRadar API.
+type ErrorMessage struct {
+	resp        *http.Response
+	Code        int      `json:"code,omitempty"`
+	Contexts    []string `json:"contexts,omitempty"`
+	Message     string   `json:"message,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Severity    string   `json:"severity,omitempty"`
+	Details     struct {
+		Reason      string `json:"reason,omitempty"`
+		Code        int    `json:"code,omitempty"`
+		StartIndex  int    `json:"start_index,omitempty"`
+		LineNumber  int    `json:"line_number,omitempty"`
+		QueryString string `json:"query_string,omitempty"`
+		TokenText   string `json:"token_text,omitempty"`
+	} `json:"details,omitempty"`
+}
+
+// Error satisfies the error interface.
+func (e *ErrorMessage) Error() string {
+	return fmt.Sprintf(
+		"%s %d: %s [%d]",
+		e.resp.Request.URL.Path, e.resp.StatusCode, e.Message, e.Code,
+	)
 }

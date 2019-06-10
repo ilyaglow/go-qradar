@@ -3,7 +3,6 @@ package qradar
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -12,14 +11,6 @@ const arielSearchAPIPrefix = "api/ariel/searches"
 // ArielService handles communication with the search-related methods of
 // the QRadar API.
 type ArielService service
-
-// ErrorMessage represents generic error message by the QRadar API.
-type ErrorMessage struct {
-	Code     string   `json:"code"`
-	Contexts []string `json:"contexts"`
-	Message  string   `json:"message"`
-	Severity string   `json:"severity"`
-}
 
 // Search represent Ariel search state.
 type Search struct {
@@ -82,18 +73,9 @@ func (a *ArielService) searchByQuery(ctx context.Context, sqlQuery string) (*Sea
 	req.URL.RawQuery = q.Encode()
 
 	var s Search
-	resp, err := a.client.Do(ctx, req, &s)
+	_, err = a.client.Do(ctx, req, &s)
 	if err != nil {
 		return nil, err
-	}
-
-	// TODO: handle [1:] error messages
-	if resp.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf(
-			"SearchByQuery: code %s, message: %s",
-			s.ErrorMessages[0].Code,
-			s.ErrorMessages[0].Message,
-		)
 	}
 
 	return &s, nil
@@ -107,18 +89,9 @@ func (a *ArielService) SearchStatus(ctx context.Context, searchID string) (strin
 	}
 
 	var s Search
-	resp, err := a.client.Do(ctx, req, &s)
+	_, err = a.client.Do(ctx, req, &s)
 	if err != nil {
 		return "", 0, err
-	}
-
-	// TODO: handle [1:] error messages
-	if (resp.StatusCode != http.StatusOK) && (resp.StatusCode != http.StatusPartialContent) {
-		return "", 0, fmt.Errorf(
-			"SearchByQuery: code %s, message: %s",
-			s.ErrorMessages[0].Code,
-			s.ErrorMessages[0].Message,
-		)
 	}
 
 	return s.Status, s.RecordCount, nil
@@ -132,13 +105,9 @@ func (a *ArielService) SearchMetadata(ctx context.Context, searchID string) (*Se
 	}
 
 	var s SearchMetadata
-	resp, err := a.client.Do(ctx, req, &s)
+	_, err = a.client.Do(ctx, req, &s)
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("SearchMetadata failed: code %s", resp.Status)
 	}
 
 	return &s, nil

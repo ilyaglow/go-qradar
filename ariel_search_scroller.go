@@ -3,7 +3,6 @@ package qradar
 import (
 	"context"
 	"fmt"
-	"net/http"
 )
 
 // SearchResultsWindow is a default window for scrolling results of the query.
@@ -65,13 +64,9 @@ func (s *SearchResultsScroller) getEvents(ctx context.Context) error {
 	req.Header.Add("Range", fmt.Sprintf("items=%d-%d", s.startIdx, s.startIdx+s.window))
 
 	var r SearchResult
-	resp, err := s.client.Do(ctx, req, &r)
+	_, err = s.client.Do(ctx, req, &r)
 	if err != nil {
 		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("SearchResultScroller failed: code %s", resp.Status)
 	}
 
 	s.events = r.Events
