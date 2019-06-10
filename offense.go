@@ -54,7 +54,7 @@ type Offense struct {
 }
 
 // Offenses of the QRadar that could be filtered or paged.
-func (s *SIEMService) Offenses(ctx context.Context, fields string, filter string, from int, to int) ([]Offense, error) {
+func (s *SIEMService) Offenses(ctx context.Context, fields string, filter string, sort string, from int, to int) ([]Offense, error) {
 	req, err := s.client.NewRequest("GET", offensesAPIPrefix, nil)
 	if err != nil {
 		return nil, err
@@ -63,8 +63,15 @@ func (s *SIEMService) Offenses(ctx context.Context, fields string, filter string
 	req.Header.Add("Range", fmt.Sprintf("items=%d-%d", from, to))
 
 	q := req.URL.Query()
-	q.Add("fields", fields)
-	q.Add("filter", filter)
+	if fields != "" {
+		q.Add("fields", fields)
+	}
+	if filter != "" {
+		q.Add("filter", filter)
+	}
+	if sort != "" {
+		q.Add("sort", sort)
+	}
 	req.URL.RawQuery = q.Encode()
 
 	var ofs []Offense
