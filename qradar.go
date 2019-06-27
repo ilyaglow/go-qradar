@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	libraryVersion = "0.2.0"
-	apiVersion     = "10.0"
+	libraryVersion = "1.0.1"
+	apiVersion     = "10.1"
 	userAgent      = "go-qradar/" + libraryVersion
 )
 
@@ -210,11 +210,11 @@ func CheckResponse(r *http.Response) error {
 // ErrorMessage represents generic error message by the QRadar API.
 type ErrorMessage struct {
 	resp        *http.Response
-	Code        int      `json:"code,omitempty"`
-	Contexts    []string `json:"contexts,omitempty"`
-	Message     string   `json:"message,omitempty"`
-	Description string   `json:"description,omitempty"`
-	Severity    string   `json:"severity,omitempty"`
+	Code        json.Number `json:"code,omitempty"`
+	Contexts    []string    `json:"contexts,omitempty"`
+	Message     string      `json:"message,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Severity    string      `json:"severity,omitempty"`
 	Details     struct {
 		Reason      string `json:"reason,omitempty"`
 		Code        int    `json:"code,omitempty"`
@@ -228,7 +228,7 @@ type ErrorMessage struct {
 // Error satisfies the error interface.
 func (e *ErrorMessage) Error() string {
 	return fmt.Sprintf(
-		"%s %d: %s [%d]",
-		e.resp.Request.URL.Path, e.resp.StatusCode, e.Message, e.Code,
+		"%s %d: %s [%s]",
+		e.resp.Request.URL.Path, e.resp.StatusCode, e.Message, string(e.Code),
 	)
 }
