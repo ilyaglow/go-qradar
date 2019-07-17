@@ -14,9 +14,12 @@ import (
 )
 
 const (
-	libraryVersion = "1.0.1"
+	libraryVersion = "1.0.2"
 	apiVersion     = "10.1"
 	userAgent      = "go-qradar/" + libraryVersion
+
+	// ErrUnauthorized assigned on 401 http error.
+	ErrUnauthorized = "unathorized"
 )
 
 // JobStatus represents status of the job: search, etc.
@@ -194,6 +197,8 @@ func CheckResponse(r *http.Response) error {
 	switch r.StatusCode {
 	case http.StatusOK, http.StatusCreated:
 		return nil
+	case http.StatusUnauthorized:
+		return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, ErrUnauthorized)
 	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusInternalServerError, http.StatusServiceUnavailable, http.StatusForbidden:
 		var v ErrorMessage
 		err := json.NewDecoder(r.Body).Decode(&v)

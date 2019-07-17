@@ -21,6 +21,9 @@ type SearchResultsScroller struct {
 // NewSearchResultsScroller initializes struct to scroll the records.
 func (a *ArielService) NewSearchResultsScroller(ctx context.Context, searchID string) (*SearchResultsScroller, error) {
 	_, num, err := a.SearchStatus(ctx, searchID)
+	if err != nil {
+		return nil, err
+	}
 
 	srs := &SearchResultsScroller{
 		count:    num,
