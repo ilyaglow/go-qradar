@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	libraryVersion = "1.0.2"
-	apiVersion     = "10.1"
+	libraryVersion = "2.0.0"
+	apiVersion     = "11.0"
 	userAgent      = "go-qradar/" + libraryVersion
 
 	// ErrUnauthorized assigned on 401 http error.
@@ -54,9 +54,21 @@ type Client struct {
 
 	common service
 
-	Ariel  *ArielService
-	SIEM   *SIEMService
-	Config *ConfigService
+	Ariel         *ArielService
+	Offense       *OffenseService
+	Domain        *DomainService
+	DSM           *DSMService
+	QID           *QIDService
+	RegexProperty *RegexPropertyService
+	Tenant        *TenantService
+
+	PropertyExpression     *PropertyExpressionService
+	PropertyJSONExpression *PropertyJSONExpressionService
+	PropertyLEEFExpression *PropertyLEEFExpressionService
+	PropertyCEFExpression  *PropertyCEFExpressionService
+
+	LogSourceType  *LogSourceTypeService
+	LogSourceGroup *LogSourceGroupService
 }
 
 type service struct {
@@ -77,8 +89,18 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	}
 	c.common.client = c
 	c.Ariel = (*ArielService)(&c.common)
-	c.SIEM = (*SIEMService)(&c.common)
-	c.Config = (*ConfigService)(&c.common)
+	c.Offense = (*OffenseService)(&c.common)
+	c.Domain = (*DomainService)(&c.common)
+	c.DSM = (*DSMService)(&c.common)
+	c.QID = (*QIDService)(&c.common)
+	c.RegexProperty = (*RegexPropertyService)(&c.common)
+	c.PropertyExpression = (*PropertyExpressionService)(&c.common)
+	c.PropertyJSONExpression = (*PropertyJSONExpressionService)(&c.common)
+	c.PropertyLEEFExpression = (*PropertyLEEFExpressionService)(&c.common)
+	c.PropertyCEFExpression = (*PropertyCEFExpressionService)(&c.common)
+	c.LogSourceType = (*LogSourceTypeService)(&c.common)
+	c.LogSourceGroup = (*LogSourceGroupService)(&c.common)
+	c.Tenant = (*TenantService)(&c.common)
 
 	for _, f := range opts {
 		err := f(c)
@@ -104,6 +126,29 @@ func SetSECKey(key string) func(*Client) error {
 		c.SECKey = key
 		return nil
 	}
+}
+
+func (c *Client) requestHelp(method, api, fields, filter string, from, to int, id *int, body interface{}) (*http.Request, error) {
+	if id != nil {
+		api = api + fmt.Sprintf("/%v", *id)
+	}
+	req, err := c.NewRequest(method, api, body)
+	if err != nil {
+		return nil, err
+	}
+	if from == 0 && to != 0 {
+		req.Header.Add("Range", fmt.Sprintf("items=%d-%d", from, to))
+	}
+	q := req.URL.Query()
+	if fields != "" {
+		q.Add("fields", fields)
+	}
+	if filter != "" {
+		q.Add("filter", filter)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	return req, nil
 }
 
 // NewRequest constructs and new request to send.
@@ -134,6 +179,9 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Version", apiVersion)
+	if buf != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
 
 	if c.SECKey != "" {
 		req.Header.Set("SEC", c.SECKey)
@@ -142,6 +190,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	if c.UserAgent != "" {
 		req.Header.Set("User-Agent", c.UserAgent)
 	}
+
 	return req, nil
 }
 
@@ -157,6 +206,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 	req = req.WithContext(ctx)
 
 	resp, err := c.Client.Do(req)
+
 	if err != nil {
 		// If we got an error, and the context has been canceled,
 		// the context's error is probably more useful.

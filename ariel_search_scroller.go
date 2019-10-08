@@ -98,17 +98,17 @@ func (a *ArielService) ScrollByQuery(ctx context.Context, sqlQuery string) (*Sea
 		return nil, nil, err
 	}
 
-	_, err = a.WaitForSearchID(ctx, s.SearchID, StatusCompleted, 2)
+	_, err = a.WaitForSearchID(ctx, *s.SearchID, StatusCompleted, 2)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	meta, err := a.SearchMetadata(ctx, s.SearchID)
+	meta, err := a.SearchMetadata(ctx, *s.SearchID)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	srs, err := a.NewSearchResultsScroller(ctx, s.SearchID)
+	srs, err := a.NewSearchResultsScroller(ctx, *s.SearchID)
 	if err != nil {
 		return nil, meta, err
 	}
