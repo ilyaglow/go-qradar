@@ -3,6 +3,7 @@ package qradar
 import (
 	"context"
 	"fmt"
+	"net/http"
 )
 
 // SearchResultsWindow is a default window for scrolling results of the query.
@@ -59,7 +60,7 @@ func (s *SearchResultsScroller) Next(ctx context.Context) bool {
 }
 
 func (s *SearchResultsScroller) getEvents(ctx context.Context) error {
-	req, err := s.client.NewRequest("GET", fmt.Sprintf("%s/%s/results", arielSearchAPIPrefix, s.searchID), nil)
+	req, err := s.client.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s/results", arielSearchAPIPrefix, s.searchID), nil)
 	if err != nil {
 		return err
 	}

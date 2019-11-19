@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"net/http"
 )
 
 // DomainService handles methods related to Domains of the QRadar API.
@@ -32,7 +33,7 @@ type Domain struct {
 
 // Get returns Domains of the current QRadar installation
 func (c *DomainService) Get(ctx context.Context, fields, filter string, from, to int) ([]Domain, error) {
-	req, err := c.client.requestHelp("GET", domainsAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, domainsAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +47,7 @@ func (c *DomainService) Get(ctx context.Context, fields, filter string, from, to
 
 // GetByID returns Domain of the current QRadar installation by ID.
 func (c *DomainService) GetByID(ctx context.Context, fields string, id int) (*Domain, error) {
-	req, err := c.client.requestHelp("GET", domainsAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, domainsAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func (c *DomainService) GetByID(ctx context.Context, fields string, id int) (*Do
 
 // Create creates Domain in the current QRadar installation.
 func (c *DomainService) Create(ctx context.Context, fields string, data interface{}) (*Domain, error) {
-	req, err := c.client.requestHelp("POST", domainsAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, domainsAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func (c *DomainService) Create(ctx context.Context, fields string, data interfac
 
 // UpdateByID updates Domain in QRadar installation by ID.
 func (c *DomainService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*Domain, error) {
-	req, err := c.client.requestHelp("POST", domainsAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, domainsAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +89,7 @@ func (c *DomainService) UpdateByID(ctx context.Context, fields string, id int, d
 
 // DeleteByID deletes Domain in QRadar installation by ID.
 func (c *DomainService) DeleteByID(ctx context.Context, fields string, id int) (*Domain, error) {
-	req, err := c.client.requestHelp("DELETE", domainsAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, domainsAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}

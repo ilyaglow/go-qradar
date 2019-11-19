@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"net/http"
 )
 
 // PropertyExpressionService handles methods related to Property Expressions of the QRadar API.
@@ -48,7 +49,7 @@ type PropertyExpression struct {
 
 // Get returns Property Expressions of the current QRadar installation.
 func (c *PropertyExpressionService) Get(ctx context.Context, fields, filter string, from, to int) ([]PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyExpressionAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyExpressionAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +63,7 @@ func (c *PropertyExpressionService) Get(ctx context.Context, fields, filter stri
 
 // GetByID returns Property Expressions of the current QRadar installation by ID.
 func (c *PropertyExpressionService) GetByID(ctx context.Context, fields string, id int) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func (c *PropertyExpressionService) GetByID(ctx context.Context, fields string, 
 
 // Create creates Property Expression in QRadar installation.
 func (c *PropertyExpressionService) Create(ctx context.Context, fields string, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyExpressionAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyExpressionAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +91,7 @@ func (c *PropertyExpressionService) Create(ctx context.Context, fields string, d
 
 // UpdateByID updates Property Expression in QRadar installation by ID.
 func (c *PropertyExpressionService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyExpressionAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyExpressionAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +105,7 @@ func (c *PropertyExpressionService) UpdateByID(ctx context.Context, fields strin
 
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Property Expression by its id.
 func (c *PropertyExpressionService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
-	req, err := c.client.requestHelp("DELETE", propertyExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, propertyExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +123,7 @@ func (c *PropertyExpressionService) DeleteByID(ctx context.Context, fields strin
 
 // Get returns Property JSON Expressions of the current QRadar installation
 func (c *PropertyJSONExpressionService) Get(ctx context.Context, fields, filter string, from, to int) ([]PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyJSONExpressionAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyJSONExpressionAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (c *PropertyJSONExpressionService) Get(ctx context.Context, fields, filter 
 
 // GetByID returns Property JSON Expression of the current QRadar installation by ID.
 func (c *PropertyJSONExpressionService) GetByID(ctx context.Context, fields string, id int) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyJSONExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyJSONExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +151,7 @@ func (c *PropertyJSONExpressionService) GetByID(ctx context.Context, fields stri
 
 // Create creates Property JSON Expression in QRadar installation>
 func (c *PropertyJSONExpressionService) Create(ctx context.Context, fields string, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyJSONExpressionAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyJSONExpressionAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +165,7 @@ func (c *PropertyJSONExpressionService) Create(ctx context.Context, fields strin
 
 // UpdateByID updates Property JSON Expression in QRadar installation by ID.
 func (c *PropertyJSONExpressionService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyJSONExpressionAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyJSONExpressionAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +179,7 @@ func (c *PropertyJSONExpressionService) UpdateByID(ctx context.Context, fields s
 
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Property JSON Expression by ID.
 func (c *PropertyJSONExpressionService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
-	req, err := c.client.requestHelp("DELETE", propertyJSONExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, propertyJSONExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +197,7 @@ func (c *PropertyJSONExpressionService) DeleteByID(ctx context.Context, fields s
 
 // Get returns Property LEEF Expressions of the current QRadar installation.
 func (c *PropertyLEEFExpressionService) Get(ctx context.Context, fields, filter string, from, to int) ([]PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyLeefExpressionAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyLeefExpressionAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +211,7 @@ func (c *PropertyLEEFExpressionService) Get(ctx context.Context, fields, filter 
 
 // GetByID returns Property LEEF Expression of the current QRadar installation by ID.
 func (c *PropertyLEEFExpressionService) GetByID(ctx context.Context, fields string, id int) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyLeefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyLeefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +225,7 @@ func (c *PropertyLEEFExpressionService) GetByID(ctx context.Context, fields stri
 
 // Create creates Property LEEF Expression in QRadar installation.
 func (c *PropertyLEEFExpressionService) Create(ctx context.Context, fields string, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyLeefExpressionAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyLeefExpressionAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +239,7 @@ func (c *PropertyLEEFExpressionService) Create(ctx context.Context, fields strin
 
 // UpdateByID updates Property LEEF Expression in QRadar installation by ID.
 func (c *PropertyLEEFExpressionService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyLeefExpressionAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyLeefExpressionAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +253,7 @@ func (c *PropertyLEEFExpressionService) UpdateByID(ctx context.Context, fields s
 
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Property LEEF Expression by ID.
 func (c *PropertyLEEFExpressionService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
-	req, err := c.client.requestHelp("DELETE", propertyLeefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, propertyLeefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +271,7 @@ func (c *PropertyLEEFExpressionService) DeleteByID(ctx context.Context, fields s
 
 // Get returns Property CEF Expressions of the current QRadar installation
 func (c *PropertyCEFExpressionService) Get(ctx context.Context, fields, filter string, from, to int) ([]PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyCefExpressionAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyCefExpressionAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +285,7 @@ func (c *PropertyCEFExpressionService) Get(ctx context.Context, fields, filter s
 
 // GetByID returns Property CEF Expression of the current QRadar installation by ID.
 func (c *PropertyCEFExpressionService) GetByID(ctx context.Context, fields string, id int) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("GET", propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -298,7 +299,7 @@ func (c *PropertyCEFExpressionService) GetByID(ctx context.Context, fields strin
 
 // Create creates Property CEF Expression in QRadar installation.
 func (c *PropertyCEFExpressionService) Create(ctx context.Context, fields string, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyCefExpressionAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyCefExpressionAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -312,7 +313,7 @@ func (c *PropertyCEFExpressionService) Create(ctx context.Context, fields string
 
 // UpdateByID updates Property CEF Expression in QRadar installation by ID.
 func (c *PropertyCEFExpressionService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*PropertyExpression, error) {
-	req, err := c.client.requestHelp("POST", propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +327,7 @@ func (c *PropertyCEFExpressionService) UpdateByID(ctx context.Context, fields st
 
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Property CEF Expression by ID.
 func (c *PropertyCEFExpressionService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
-	req, err := c.client.requestHelp("DELETE", propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}

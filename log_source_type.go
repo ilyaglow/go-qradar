@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"net/http"
 )
 
 // LogSourceTypeService handles methods related to Log Source Types of the QRadar API.
@@ -30,7 +31,7 @@ type LogSourceType struct {
 
 // Get returns Log Source Types of the current QRadar installation.
 func (c *LogSourceTypeService) Get(ctx context.Context, fields, filter string, from, to int) ([]LogSourceType, error) {
-	req, err := c.client.requestHelp("GET", logSourceTypeAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +45,7 @@ func (c *LogSourceTypeService) Get(ctx context.Context, fields, filter string, f
 
 // Create creates Log Source Type in the current QRadar installation.
 func (c *LogSourceTypeService) Create(ctx context.Context, fields string, data interface{}) (*LogSourceType, error) {
-	req, err := c.client.requestHelp("POST", logSourceTypeAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, logSourceTypeAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +59,7 @@ func (c *LogSourceTypeService) Create(ctx context.Context, fields string, data i
 
 // GetByID returns Log Source Type of the current QRadar installation by ID.
 func (c *LogSourceTypeService) GetByID(ctx context.Context, fields string, id int) (*LogSourceType, error) {
-	req, err := c.client.requestHelp("GET", logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +73,7 @@ func (c *LogSourceTypeService) GetByID(ctx context.Context, fields string, id in
 
 // UpdateByID updates Log Source Type in QRadar installation by ID.
 func (c *LogSourceTypeService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*LogSourceType, error) {
-	req, err := c.client.requestHelp("POST", logSourceTypeAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, logSourceTypeAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (c *LogSourceTypeService) UpdateByID(ctx context.Context, fields string, id
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Log Source Type by ID.
 // TODO need to be tested
 func (c *LogSourceTypeService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
-	req, err := c.client.requestHelp("DELETE", logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}

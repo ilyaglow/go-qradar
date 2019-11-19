@@ -3,6 +3,7 @@ package qradar
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -64,7 +65,7 @@ type SearchColumn struct {
 // SearchByQuery events in the QRadar API.
 // It's caller responsibility to wait for results and get the final data.
 func (a *ArielService) SearchByQuery(ctx context.Context, sqlQuery string) (*Search, error) {
-	req, err := a.client.NewRequest("POST", arielSearchAPIPrefix, nil)
+	req, err := a.client.NewRequest(http.MethodPost, arielSearchAPIPrefix, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (a *ArielService) SearchByQuery(ctx context.Context, sqlQuery string) (*Sea
 
 // SearchStatus returns a status and count of the records of the search.
 func (a *ArielService) SearchStatus(ctx context.Context, searchID string) (string, int, error) {
-	req, err := a.client.NewRequest("GET", fmt.Sprintf("%s/%s", arielSearchAPIPrefix, searchID), nil)
+	req, err := a.client.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", arielSearchAPIPrefix, searchID), nil)
 	if err != nil {
 		return "", 0, err
 	}
@@ -101,7 +102,7 @@ func (a *ArielService) SearchStatus(ctx context.Context, searchID string) (strin
 
 // SearchMetadata represents a metadata retriever.
 func (a *ArielService) SearchMetadata(ctx context.Context, searchID string) (*SearchMetadata, error) {
-	req, err := a.client.NewRequest("GET", fmt.Sprintf("%s/%s/metadata", arielSearchAPIPrefix, searchID), nil)
+	req, err := a.client.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s/metadata", arielSearchAPIPrefix, searchID), nil)
 	if err != nil {
 		return nil, err
 	}

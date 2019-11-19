@@ -1,6 +1,9 @@
 package qradar
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 // LogSourceGroupService handles methods related to Log Source Groups of the QRadar API.
 type LogSourceGroupService service
@@ -23,7 +26,7 @@ type LogSourceGroup struct {
 
 // Get returns Log Source Groups of the current QRadar installation.
 func (c *LogSourceGroupService) Get(ctx context.Context, fields, filter string, from, to int) ([]LogSourceGroup, error) {
-	req, err := c.client.requestHelp("GET", logSourceTypeAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +40,7 @@ func (c *LogSourceGroupService) Get(ctx context.Context, fields, filter string, 
 
 // GetByID returns Log Source Group of the current QRadar installation by ID.
 func (c *LogSourceGroupService) GetByID(ctx context.Context, fields string, id int) (*LogSourceGroup, error) {
-	req, err := c.client.requestHelp("GET", logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}

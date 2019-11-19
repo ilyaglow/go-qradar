@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"net/http"
 )
 
 // RegexPropertyService handles methods related to Regex Properties of the QRadar API.
@@ -42,7 +43,7 @@ type DeleteTask struct {
 
 // Get returns Regex Properties of the current QRadar installation.
 func (c *RegexPropertyService) Get(ctx context.Context, fields, filter string, from, to int) ([]RegexProperty, error) {
-	req, err := c.client.requestHelp("GET", regexPropertyAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, regexPropertyAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +57,7 @@ func (c *RegexPropertyService) Get(ctx context.Context, fields, filter string, f
 
 // GetByID returns Regex Property of the current QRadar installation by ID.
 func (c *RegexPropertyService) GetByID(ctx context.Context, fields string, id int) (*RegexProperty, error) {
-	req, err := c.client.requestHelp("GET", regexPropertyAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, regexPropertyAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +71,7 @@ func (c *RegexPropertyService) GetByID(ctx context.Context, fields string, id in
 
 // Create creates Regex Property in QRadar installation.
 func (c *RegexPropertyService) Create(ctx context.Context, fields string, data interface{}) (*RegexProperty, error) {
-	req, err := c.client.requestHelp("POST", regexPropertyAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, regexPropertyAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +85,7 @@ func (c *RegexPropertyService) Create(ctx context.Context, fields string, data i
 
 // UpdateByID updates Regex Property in QRadar installation by ID.
 func (c *RegexPropertyService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*RegexProperty, error) {
-	req, err := c.client.requestHelp("POST", regexPropertyAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, regexPropertyAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +99,7 @@ func (c *RegexPropertyService) UpdateByID(ctx context.Context, fields string, id
 
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Regex Property by ID.
 func (c *RegexPropertyService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
-	req, err := c.client.requestHelp("DELETE", regexPropertyAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, regexPropertyAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}

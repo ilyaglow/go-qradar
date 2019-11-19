@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"net/http"
 )
 
 // OffenseService handles methods related to Offenses of the QRadar API.
@@ -53,7 +54,7 @@ type Offense struct {
 
 // Get returns Offenses of the current QRadar installation.
 func (c *OffenseService) Get(ctx context.Context, fields, filter string, from, to int) ([]Offense, error) {
-	req, err := c.client.requestHelp("GET", offensesAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, offensesAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +68,7 @@ func (c *OffenseService) Get(ctx context.Context, fields, filter string, from, t
 
 // GetByID returns Offense of the current QRadar installation by ID.
 func (c *OffenseService) GetByID(ctx context.Context, fields string, id int) (*Offense, error) {
-	req, err := c.client.requestHelp("GET", offensesAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, offensesAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +82,7 @@ func (c *OffenseService) GetByID(ctx context.Context, fields string, id int) (*O
 
 // UpdateByID updates Offense in QRadar installation by ID.
 func (c *OffenseService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*Offense, error) {
-	req, err := c.client.requestHelp("POST", offensesAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, offensesAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}

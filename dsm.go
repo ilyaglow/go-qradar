@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"net/http"
 )
 
 // DSMService handles methods related to DSMs of the QRadar API.
@@ -24,7 +25,7 @@ type DSM struct {
 
 // Get returns DSMs of the current QRadar installation.
 func (c *DSMService) Get(ctx context.Context, fields, filter string, from, to int) ([]DSM, error) {
-	req, err := c.client.requestHelp("GET", dsmAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, dsmAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +39,7 @@ func (c *DSMService) Get(ctx context.Context, fields, filter string, from, to in
 
 // Create creates DSM in the current QRadar installation.
 func (c *DSMService) Create(ctx context.Context, fields string, data interface{}) (*DSM, error) {
-	req, err := c.client.requestHelp("POST", dsmAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, dsmAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +53,7 @@ func (c *DSMService) Create(ctx context.Context, fields string, data interface{}
 
 // GetByID returns DSM of the current QRadar installation by ID.
 func (c *DSMService) GetByID(ctx context.Context, fields string, id int) (*DSM, error) {
-	req, err := c.client.requestHelp("GET", dsmAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, dsmAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func (c *DSMService) GetByID(ctx context.Context, fields string, id int) (*DSM, 
 
 // UpdateByID updates DSM in QRadar installation by ID.
 func (c *DSMService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*DSM, error) {
-	req, err := c.client.requestHelp("POST", dsmAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, dsmAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}

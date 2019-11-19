@@ -1,6 +1,9 @@
 package qradar
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 // TenantService handles methods related to Tenants of the QRadar API.
 type TenantService service
@@ -21,7 +24,7 @@ type Tenant struct {
 
 // Get returns Tenants of the current QRadar installation.
 func (c *TenantService) Get(ctx context.Context, fields, filter string, from, to int) ([]Tenant, error) {
-	req, err := c.client.requestHelp("GET", tenantAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, tenantAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +38,7 @@ func (c *TenantService) Get(ctx context.Context, fields, filter string, from, to
 
 // Create creates Tenant in QRadar installation.
 func (c *TenantService) Create(ctx context.Context, fields string, data interface{}) (*Tenant, error) {
-	req, err := c.client.requestHelp("POST", tenantAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, tenantAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +52,7 @@ func (c *TenantService) Create(ctx context.Context, fields string, data interfac
 
 // GetByID returns Tenant of the current QRadar installation by ID.
 func (c *TenantService) GetByID(ctx context.Context, fields string, id int) (*Tenant, error) {
-	req, err := c.client.requestHelp("GET", tenantAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, tenantAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +66,7 @@ func (c *TenantService) GetByID(ctx context.Context, fields string, id int) (*Te
 
 // UpdateByID updates Tenant record in QRadar installation by ID.
 func (c *TenantService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*Tenant, error) {
-	req, err := c.client.requestHelp("POST", tenantAPIPrefix, fields, "", 0, 0, &id, data)
+	req, err := c.client.requestHelp(http.MethodPost, tenantAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +80,7 @@ func (c *TenantService) UpdateByID(ctx context.Context, fields string, id int, d
 
 // DeleteByID deletes Tenant in QRadar installation by ID.
 func (c *TenantService) DeleteByID(ctx context.Context, fields string, id int) (*Tenant, error) {
-	req, err := c.client.requestHelp("DELETE", tenantAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodDelete, tenantAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
