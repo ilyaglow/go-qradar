@@ -20,7 +20,7 @@ type QID struct {
 	LogSourceTypeID  *int    `json:"log_source_type_id,omitempty"`
 	ID               *int    `json:"id,omitempty"`
 	LowLevelCategory *int    `json:"low_level_category_id,omitempty"`
-	Qid              *int    `json:"qid"`
+	QID              *int    `json:"qid,omitempty"`
 	UUID             *string `json:"uuid,omitempty"`
 }
 

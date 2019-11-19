@@ -128,11 +128,11 @@ func SetSECKey(key string) func(*Client) error {
 	}
 }
 
-func (c *Client) requestHelp(method, api, fields, filter string, from, to int, id *int, body interface{}) (*http.Request, error) {
+func (c *Client) requestHelp(method, urlStr, fields, filter string, from, to int, id *int, body interface{}) (*http.Request, error) {
 	if id != nil {
-		api = api + fmt.Sprintf("/%v", *id)
+		urlStr = fmt.Sprintf("%s/%d", urlStr, *id)
 	}
-	req, err := c.NewRequest(method, api, body)
+	req, err := c.NewRequest(method, urlStr, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +238,6 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 			}
 		}
 	}
-
 	return resp, err
 }
 
