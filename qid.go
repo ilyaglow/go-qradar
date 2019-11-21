@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -14,14 +15,14 @@ const (
 
 // QID represents QRadar's QID.
 type QID struct {
-	Severity         *int    `json:"severity,omitempty"`
-	Name             *string `json:"name,omitempty"`
-	Description      *string `json:"description,omitempty"`
-	LogSourceTypeID  *int    `json:"log_source_type_id,omitempty"`
-	ID               *int    `json:"id,omitempty"`
-	LowLevelCategory *int    `json:"low_level_category_id,omitempty"`
-	QID              *int    `json:"qid,omitempty"`
-	UUID             *string `json:"uuid,omitempty"`
+	Severity           *int    `json:"severity,omitempty"`
+	Name               *string `json:"name,omitempty"`
+	Description        *string `json:"description,omitempty"`
+	LogSourceTypeID    *int    `json:"log_source_type_id,omitempty"`
+	ID                 *int    `json:"id,omitempty"`
+	LowLevelCategoryID *int    `json:"low_level_category_id,omitempty"`
+	QID                *int    `json:"qid,omitempty"`
+	UUID               *string `json:"uuid,omitempty"`
 }
 
 // Get returns QIDs of the current QRadar installation.
@@ -50,6 +51,26 @@ func (c *QIDService) GetByID(ctx context.Context, fields string, id int) (*QID, 
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetByQID returns QID of the current QRadar installation by QID.
+func (c *QIDService) GetByQID(ctx context.Context, fields string, qid int) (*QID, error) {
+	req, err := c.client.requestHelp(http.MethodGet, qidAPIPrefix, fields, fmt.Sprintf("qid=%d", qid), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []QID
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more elements than expected - %d", len(result))
+	}
+	return &result[0], nil
 }
 
 // Create creates QID in QRadar installation.

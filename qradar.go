@@ -54,13 +54,15 @@ type Client struct {
 
 	common service
 
-	Ariel         *ArielService
-	Offense       *OffenseService
-	Domain        *DomainService
-	DSM           *DSMService
-	QID           *QIDService
-	RegexProperty *RegexPropertyService
-	Tenant        *TenantService
+	Ariel             *ArielService
+	Offense           *OffenseService
+	Domain            *DomainService
+	DSM               *DSMService
+	QID               *QIDService
+	LowLevelCategory  *LowLevelCategoryService
+	HighLevelCategory *HighLevelCategoryService
+	RegexProperty     *RegexPropertyService
+	Tenant            *TenantService
 
 	PropertyExpression     *PropertyExpressionService
 	PropertyJSONExpression *PropertyJSONExpressionService
@@ -100,6 +102,8 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.PropertyCEFExpression = (*PropertyCEFExpressionService)(&c.common)
 	c.LogSourceType = (*LogSourceTypeService)(&c.common)
 	c.LogSourceGroup = (*LogSourceGroupService)(&c.common)
+	c.LowLevelCategory = (*LowLevelCategoryService)(&c.common)
+	c.HighLevelCategory = (*HighLevelCategoryService)(&c.common)
 	c.Tenant = (*TenantService)(&c.common)
 
 	for _, f := range opts {
