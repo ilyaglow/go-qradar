@@ -22,6 +22,9 @@ func (c *BuildingBlockWithDataService) Get(ctx context.Context, fields, filter s
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result []BuildingBlockWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
@@ -36,6 +39,9 @@ func (c *BuildingBlockWithDataService) Create(ctx context.Context, fields string
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result BuildingBlockWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
@@ -50,6 +56,9 @@ func (c *BuildingBlockWithDataService) GetByID(ctx context.Context, fields strin
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result BuildingBlockWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
@@ -64,6 +73,9 @@ func (c *BuildingBlockWithDataService) UpdateByID(ctx context.Context, fields st
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result BuildingBlockWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {

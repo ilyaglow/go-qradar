@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -82,4 +83,24 @@ func (c *RuleService) DeleteByID(ctx context.Context, fields string, id int) (*D
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetByName returns Rule of the current QRadar installation by Name.
+func (c *RuleService) GetByName(ctx context.Context, fields string, name string) (*Rule, error) {
+	req, err := c.client.requestHelp(http.MethodGet, ruleAPIPrefix, fields, fmt.Sprintf("name=\"%s\"", name), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []Rule
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more elements than expected - %d", len(result))
+	}
+	return &result[0], nil
 }
