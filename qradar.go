@@ -54,15 +54,19 @@ type Client struct {
 
 	common service
 
-	Ariel             *ArielService
-	Offense           *OffenseService
-	Domain            *DomainService
-	DSM               *DSMService
-	QID               *QIDService
-	LowLevelCategory  *LowLevelCategoryService
-	HighLevelCategory *HighLevelCategoryService
-	RegexProperty     *RegexPropertyService
-	Tenant            *TenantService
+	Ariel                 *ArielService
+	BuildingBlock         *BuildingBlock
+	BuildingBlockWithData *BuildingBlockWithDataService
+	Offense               *OffenseService
+	Domain                *DomainService
+	DSM                   *DSMService
+	QID                   *QIDService
+	LowLevelCategory      *LowLevelCategoryService
+	HighLevelCategory     *HighLevelCategoryService
+	RegexProperty         *RegexPropertyService
+	Tenant                *TenantService
+	Rule                  *RuleService
+	RuleWithData          *RuleWithDataService
 
 	PropertyExpression     *PropertyExpressionService
 	PropertyJSONExpression *PropertyJSONExpressionService
@@ -91,11 +95,15 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	}
 	c.common.client = c
 	c.Ariel = (*ArielService)(&c.common)
+	c.BuildingBlock = (*BuildingBlockService)(&c.common)
+	c.BuildingBlockWithData = (*BuildingBlockWithDataService)(&c.common)
 	c.Offense = (*OffenseService)(&c.common)
 	c.Domain = (*DomainService)(&c.common)
 	c.DSM = (*DSMService)(&c.common)
 	c.QID = (*QIDService)(&c.common)
 	c.RegexProperty = (*RegexPropertyService)(&c.common)
+	c.Rule = (*RuleService)(&c.common)
+	c.RuleWithData = (*RuleWithDataService)(&c.common)
 	c.PropertyExpression = (*PropertyExpressionService)(&c.common)
 	c.PropertyJSONExpression = (*PropertyJSONExpressionService)(&c.common)
 	c.PropertyLEEFExpression = (*PropertyLEEFExpressionService)(&c.common)
