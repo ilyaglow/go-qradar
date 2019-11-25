@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -25,6 +26,9 @@ func (c *RuleWithDataService) Get(ctx context.Context, fields, filter string, fr
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result []RuleWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
@@ -39,6 +43,9 @@ func (c *RuleWithDataService) Create(ctx context.Context, fields string, data in
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result RuleWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
@@ -53,6 +60,9 @@ func (c *RuleWithDataService) GetByID(ctx context.Context, fields string, id int
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result RuleWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
@@ -67,10 +77,36 @@ func (c *RuleWithDataService) UpdateByID(ctx context.Context, fields string, id 
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
 	var result RuleWithData
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetByName returns RulesWithData of the current QRadar installation by Name.
+func (c *RuleWithDataService) GetByName(ctx context.Context, fields string, name string) (*RuleWithData, error) {
+	req, err := c.client.requestHelp(http.MethodGet, ruleWithDataAPIPrefix, fields, fmt.Sprintf("name=\"%s\"", name), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Allow-Hidden", "true")
+
+	var result []RuleWithData
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more elements than expected - %d", len(result))
+	}
+	return &result[0], nil
 }
