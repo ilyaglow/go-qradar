@@ -55,7 +55,7 @@ type Client struct {
 	common service
 
 	Ariel                 *ArielService
-	BuildingBlock         *BuildingBlock
+	BuildingBlock         *BuildingBlockService
 	BuildingBlockWithData *BuildingBlockWithDataService
 	Offense               *OffenseService
 	Domain                *DomainService
