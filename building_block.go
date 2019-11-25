@@ -70,7 +70,7 @@ func (c *BuildingBlockService) UpdateByID(ctx context.Context, fields string, id
 	return &result, nil
 }
 
-// DeleteByID creates A Delete Task in QRadar installation in order to safely delete Rule by ID.
+// DeleteByID creates A Delete Task in QRadar installation in order to safely delete BuildingBlock by ID.
 func (c *BuildingBlockService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
 	req, err := c.client.requestHelp(http.MethodDelete, buildingBlockAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
