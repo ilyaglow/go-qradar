@@ -32,6 +32,9 @@ type PropertyExpression struct {
 	Regex        *string `json:"regex,omitempty"`
 	CaptureGroup *int    `json:"capture_group,omitempty"`
 
+	DelimeterNameValue *string `json:"delimiter_name_value,omitempty"`
+	DelimeterPair      *string `json:"delimiter_pair,omitempty"`
+
 	Expression *string `json:"expression,omitempty"`
 }
 

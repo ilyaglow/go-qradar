@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -98,4 +99,23 @@ func (c *LogSourceTypeService) DeleteByID(ctx context.Context, fields string, id
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetByName returns Log Source Type of the current QRadar installation by Name.
+func (c *LogSourceTypeService) GetByName(ctx context.Context, fields string, name string) (*LogSourceType, error) {
+	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, fmt.Sprintf("name=\"%s\"", name), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []LogSourceType
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	} else if len(result) > 1 {
+		return nil, fmt.Errorf("found more rules than expected - %d", len(result))
+	}
+	return &result[0], nil
 }

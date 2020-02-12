@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -90,4 +91,24 @@ func (c *TenantService) DeleteByID(ctx context.Context, fields string, id int) (
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetByName returns Tenant of the current QRadar installation by Name.
+func (c *TenantService) GetByName(ctx context.Context, fields string, name string) (*Tenant, error) {
+	req, err := c.client.requestHelp(http.MethodGet, tenantAPIPrefix, fields, fmt.Sprintf("name=\"%s\"", name), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []Tenant
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more elements than expected - %d", len(result))
+	}
+	return &result[0], nil
 }

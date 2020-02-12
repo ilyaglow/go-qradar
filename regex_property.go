@@ -2,6 +2,7 @@ package qradar
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -109,4 +110,44 @@ func (c *RegexPropertyService) DeleteByID(ctx context.Context, fields string, id
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetByName returns Regex Property of the current QRadar installation by Name.
+func (c *RegexPropertyService) GetByName(ctx context.Context, fields string, name string) (*RegexProperty, error) {
+	req, err := c.client.requestHelp(http.MethodGet, regexPropertyAPIPrefix, fields, fmt.Sprintf("name=\"%s\"", name), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []RegexProperty
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more rules than expected - %d", len(result))
+	}
+	return &result[0], nil
+}
+
+// GetByUUID returns Regex Property of the current QRadar installation by UUID.
+func (c *RegexPropertyService) GetByUUID(ctx context.Context, fields string, uuid string) (*RegexProperty, error) {
+	req, err := c.client.requestHelp(http.MethodGet, regexPropertyAPIPrefix, fields, fmt.Sprintf("identifier=\"%s\"", uuid), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []RegexProperty
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more rules than expected - %d", len(result))
+	}
+	return &result[0], nil
 }

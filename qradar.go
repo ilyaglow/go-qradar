@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	libraryVersion = "2.0.0"
-	apiVersion     = "11.0"
+	libraryVersion = "1.1.0"
+	defAPIVersion  = "12.0"
 	userAgent      = "go-qradar/" + libraryVersion
 
 	// ErrUnauthorized assigned on 401 http error.
@@ -51,6 +51,7 @@ type Client struct {
 	BaseURL   *url.URL
 	UserAgent string
 	SECKey    string
+	APIv      string
 
 	common service
 
@@ -58,6 +59,7 @@ type Client struct {
 	BuildingBlock         *BuildingBlockService
 	BuildingBlockWithData *BuildingBlockWithDataService
 	Offense               *OffenseService
+	OffenseType           *OffenseTypeService
 	Domain                *DomainService
 	DSM                   *DSMService
 	QID                   *QIDService
@@ -72,9 +74,16 @@ type Client struct {
 	PropertyJSONExpression *PropertyJSONExpressionService
 	PropertyLEEFExpression *PropertyLEEFExpressionService
 	PropertyCEFExpression  *PropertyCEFExpressionService
+	ProperetyNVPExpression *PropertyNVPExpressionService
 
-	LogSourceType  *LogSourceTypeService
-	LogSourceGroup *LogSourceGroupService
+	LogSourceExtension *LogSourceExtensionService
+	LogSourceType      *LogSourceTypeService
+	LogSourceGroup     *LogSourceGroupService
+
+	ReferenceMapOfSets *ReferenceMapOfSetsService
+	ReferenceMap       *ReferenceMapService
+	ReferenceSet       *ReferenceSetService
+	ReferenceTable     *ReferenceTableService
 }
 
 type service struct {
@@ -92,12 +101,14 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 		Client:    http.DefaultClient,
 		UserAgent: userAgent,
 		BaseURL:   u,
+		APIv:      defAPIVersion,
 	}
 	c.common.client = c
 	c.Ariel = (*ArielService)(&c.common)
 	c.BuildingBlock = (*BuildingBlockService)(&c.common)
 	c.BuildingBlockWithData = (*BuildingBlockWithDataService)(&c.common)
 	c.Offense = (*OffenseService)(&c.common)
+	c.OffenseType = (*OffenseTypeService)(&c.common)
 	c.Domain = (*DomainService)(&c.common)
 	c.DSM = (*DSMService)(&c.common)
 	c.QID = (*QIDService)(&c.common)
@@ -108,11 +119,17 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.PropertyJSONExpression = (*PropertyJSONExpressionService)(&c.common)
 	c.PropertyLEEFExpression = (*PropertyLEEFExpressionService)(&c.common)
 	c.PropertyCEFExpression = (*PropertyCEFExpressionService)(&c.common)
+	c.ProperetyNVPExpression = (*PropertyNVPExpressionService)(&c.common)
+	c.LogSourceExtension = (*LogSourceExtensionService)(&c.common)
 	c.LogSourceType = (*LogSourceTypeService)(&c.common)
 	c.LogSourceGroup = (*LogSourceGroupService)(&c.common)
 	c.LowLevelCategory = (*LowLevelCategoryService)(&c.common)
 	c.HighLevelCategory = (*HighLevelCategoryService)(&c.common)
 	c.Tenant = (*TenantService)(&c.common)
+	c.ReferenceMapOfSets = (*ReferenceMapOfSetsService)(&c.common)
+	c.ReferenceMap = (*ReferenceMapService)(&c.common)
+	c.ReferenceSet = (*ReferenceSetService)(&c.common)
+	c.ReferenceTable = (*ReferenceTableService)(&c.common)
 
 	for _, f := range opts {
 		err := f(c)
@@ -136,6 +153,14 @@ func SetHTTPClient(httpClient *http.Client) func(*Client) error {
 func SetSECKey(key string) func(*Client) error {
 	return func(c *Client) error {
 		c.SECKey = key
+		return nil
+	}
+}
+
+// SetAPIversion sets a key to auth on the QRadar API
+func SetAPIversion(api string) func(*Client) error {
+	return func(c *Client) error {
+		c.APIv = api
 		return nil
 	}
 }
@@ -190,7 +215,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Version", apiVersion)
+	req.Header.Set("Version", defAPIVersion)
 	if buf != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
@@ -216,7 +241,6 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 // ctx.Err() will be returned.
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error) {
 	req = req.WithContext(ctx)
-
 	resp, err := c.Client.Do(req)
 
 	if err != nil {
@@ -236,7 +260,6 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 	if err != nil {
 		return resp, err
 	}
-
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
 			io.Copy(w, resp.Body)

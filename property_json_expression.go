@@ -40,7 +40,7 @@ func (c *PropertyJSONExpressionService) GetByID(ctx context.Context, fields stri
 	return &result, nil
 }
 
-// Create creates Property JSON Expression in QRadar installation>
+// Create creates Property JSON Expression in QRadar installation.
 func (c *PropertyJSONExpressionService) Create(ctx context.Context, fields string, data interface{}) (*PropertyExpression, error) {
 	req, err := c.client.requestHelp(http.MethodPost, propertyJSONExpressionAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {

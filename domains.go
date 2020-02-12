@@ -31,7 +31,7 @@ type Domain struct {
 	TenantID          *int    `json:"tenant_id,omitempty"`
 }
 
-// Get returns Domains of the current QRadar installation
+// Get returns Domains of the current QRadar installation.
 func (c *DomainService) Get(ctx context.Context, fields, filter string, from, to int) ([]Domain, error) {
 	req, err := c.client.requestHelp(http.MethodGet, domainsAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {

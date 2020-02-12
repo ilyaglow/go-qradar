@@ -29,7 +29,7 @@ type Rule struct {
 	ModificationDate     *int    `json:"modification_date,omitempty"`
 }
 
-// Get returns Rules of the current QRadar installation
+// Get returns Rules of the current QRadar installation.
 func (c *RuleService) Get(ctx context.Context, fields, filter string, from, to int) ([]Rule, error) {
 	req, err := c.client.requestHelp(http.MethodGet, ruleAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *RuleService) GetByID(ctx context.Context, fields string, id int) (*Rule
 	return &result, nil
 }
 
-// UpdateByID updates only the rule owner or enabled/disabled by ID.
+// UpdateByID updates the rule owner or toggle the rule enabled/disabled by ID.
 func (c *RuleService) UpdateByID(ctx context.Context, fields string, id int, data interface{}) (*Rule, error) {
 	req, err := c.client.requestHelp(http.MethodPost, ruleAPIPrefix, fields, "", 0, 0, &id, data)
 	if err != nil {
@@ -100,7 +100,27 @@ func (c *RuleService) GetByName(ctx context.Context, fields string, name string)
 		return nil, nil
 	}
 	if len(result) > 1 {
-		return nil, fmt.Errorf("found more elements than expected - %d", len(result))
+		return nil, fmt.Errorf("found more rules than expected - %d", len(result))
+	}
+	return &result[0], nil
+}
+
+// GetByUUID returns Rule of the current QRadar installation by UUID.
+func (c *RuleService) GetByUUID(ctx context.Context, fields string, uuid string) (*Rule, error) {
+	req, err := c.client.requestHelp(http.MethodGet, ruleAPIPrefix, fields, fmt.Sprintf("identifier=\"%s\"", uuid), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []Rule
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("found more rules than expected - %d", len(result))
 	}
 	return &result[0], nil
 }

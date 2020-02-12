@@ -100,3 +100,36 @@ func (c *QIDService) UpdateByID(ctx context.Context, fields string, id int, data
 	}
 	return &result, nil
 }
+
+// GetByName returns QID of the current QRadar installation by name.
+// If there are more than one QID that the same, this will returm the one with the least QID number
+func (c *QIDService) GetByName(ctx context.Context, fields string, name string) (*QID, error) {
+	req, err := c.client.requestHelp(http.MethodGet, qidAPIPrefix, fields, fmt.Sprintf("name=\"%s\"", name), 0, 0, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []QID
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	if len(result) > 1 {
+		return getQIDWithLeastQID(result), nil
+	}
+	return &result[0], nil
+}
+
+func getQIDWithLeastQID(blobs []QID) *QID {
+	res := 0
+	min := *blobs[0].QID
+	for i, blob := range blobs {
+		if blob.QID != nil && *blob.QID < min {
+			min = *blob.QID
+			res = i
+		}
+	}
+	return &blobs[res]
+}

@@ -12,7 +12,7 @@ const (
 	propertyCefExpressionAPIPrefix = "api/config/event_sources/custom_properties/property_cef_expressions"
 )
 
-// Get returns Property CEF Expressions of the current QRadar installation
+// Get returns Property CEF Expressions of the current QRadar installation.
 func (c *PropertyCEFExpressionService) Get(ctx context.Context, fields, filter string, from, to int) ([]PropertyExpression, error) {
 	req, err := c.client.requestHelp(http.MethodGet, propertyCefExpressionAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {

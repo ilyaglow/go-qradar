@@ -51,3 +51,17 @@ func (c *LogSourceGroupService) GetByID(ctx context.Context, fields string, id i
 	}
 	return &result, nil
 }
+
+// Create creates Log Source Group in the current QRadar installation.
+func (c *LogSourceGroupService) Create(ctx context.Context, fields string, data interface{}) (*LogSourceGroup, error) {
+	req, err := c.client.requestHelp(http.MethodPost, logSourceTypeAPIPrefix, fields, "", 0, 0, nil, data)
+	if err != nil {
+		return nil, err
+	}
+	var result LogSourceGroup
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
