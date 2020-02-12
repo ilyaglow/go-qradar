@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	libraryVersion = "1.1.0"
-	defAPIVersion  = "12.0"
-	userAgent      = "go-qradar/" + libraryVersion
+	libraryVersion    = "1.1.1"
+	defaultAPIVersion = "12.0"
+	userAgent         = "go-qradar/" + libraryVersion
 
 	// ErrUnauthorized assigned on 401 http error.
 	ErrUnauthorized = "unathorized"
@@ -101,7 +101,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 		Client:    http.DefaultClient,
 		UserAgent: userAgent,
 		BaseURL:   u,
-		APIv:      defAPIVersion,
+		APIv:      defaultAPIVersion,
 	}
 	c.common.client = c
 	c.Ariel = (*ArielService)(&c.common)
@@ -215,7 +215,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Version", defAPIVersion)
+	req.Header.Set("Version", defaultAPIVersion)
 	if buf != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
@@ -279,7 +279,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 // CheckResponse checks the API response for errors.
 func CheckResponse(r *http.Response) error {
 	switch r.StatusCode {
-	case http.StatusOK, http.StatusCreated:
+	case http.StatusOK, http.StatusCreated, http.StatusNoContent:
 		return nil
 	case http.StatusUnauthorized:
 		return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, ErrUnauthorized)

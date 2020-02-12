@@ -69,15 +69,16 @@ func (c *PropertyCEFExpressionService) UpdateByID(ctx context.Context, fields st
 }
 
 // DeleteByID creates A Delete Task in QRadar installation in order to safely delete Property CEF Expression by ID.
-func (c *PropertyCEFExpressionService) DeleteByID(ctx context.Context, fields string, id int) (*DeleteTask, error) {
+func (c *PropertyCEFExpressionService) DeleteByID(ctx context.Context, fields string, id int) error {
 	req, err := c.client.requestHelp(http.MethodDelete, propertyCefExpressionAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var result DeleteTask
-	_, err = c.client.Do(ctx, req, &result)
+	req.Header.Set("Accept", "text/plain")
+
+	_, err = c.client.Do(ctx, req, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &result, nil
+	return nil
 }
