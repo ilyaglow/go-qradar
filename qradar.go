@@ -157,7 +157,7 @@ func SetSECKey(key string) func(*Client) error {
 	}
 }
 
-// SetAPIversion sets a key to auth on the QRadar API
+// SetAPIversion sets a version of QRadar API
 func SetAPIversion(api string) func(*Client) error {
 	return func(c *Client) error {
 		c.APIv = api
@@ -215,7 +215,13 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Version", defaultAPIVersion)
+
+	if c.APIv == "" {
+		req.Header.Set("Version", defaultAPIVersion)
+	} else {
+		req.Header.Set("Version", c.APIv)
+	}
+
 	if buf != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
