@@ -20,6 +20,16 @@ type ReferenceSet struct {
 	NumberOfElements *int    `json:"number_of_elements,omitempty"`
 	TimeToLive       *string `json:"time_to_live,omitempty"`
 	TimeoutType      *string `json:"timeout_type,omitempty"`
+
+	Data []ReferenceSetData `json:"data,omitempty"`
+}
+
+// ReferenceSetData represents data of Reference Set
+type ReferenceSetData struct {
+	FirstSeen *int    `json:"first_seen,omitempty"`
+	LastSeen  *int    `json:"last_seen,omitempty"`
+	Source    *string `json:"source,omitempty"`
+	Value     *string `json:"value,omitempty"`
 }
 
 // Get returns Reference sets of the current QRadar installation.
@@ -62,6 +72,34 @@ func (c *ReferenceSetService) Create(ctx context.Context, fields string, data *R
 
 	req.URL.RawQuery = q.Encode()
 
+	var result ReferenceSet
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetWithData returns Reference set with data of the current QRadar installation.
+func (c *ReferenceSetService) GetWithData(ctx context.Context, fields, filter, name string, from, to int) (*ReferenceSet, error) {
+	req, err := c.client.requestHelp(http.MethodGet, referenceSetsServiceAPIPrefix+"/"+name, fields, filter, from, to, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result ReferenceSet
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// BulkLoad uploads many values in QRadar's Reference Set
+func (c *ReferenceSetService) BulkLoad(ctx context.Context, fields, name string, data interface{}) (*ReferenceSet, error) {
+	req, err := c.client.requestHelp(http.MethodPost, referenceSetsServiceAPIPrefix+"/bulk_load/"+name, fields, "", 0, 0, nil, data)
+	if err != nil {
+		return nil, err
+	}
 	var result ReferenceSet
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {

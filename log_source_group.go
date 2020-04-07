@@ -21,12 +21,12 @@ type LogSourceGroup struct {
 	Owner            *string `json:"owner,omitempty"`
 	ModificationDate *int    `json:"modification_date,omitempty"`
 	Assignable       *bool   `json:"assignable,omitempty"`
-	ChildGroups      []int   `json:"child_groups,omitempty"`
+	ChildGroupIDs    []int   `json:"child_group_ids,omitempty"`
 }
 
 // Get returns Log Source Groups of the current QRadar installation.
 func (c *LogSourceGroupService) Get(ctx context.Context, fields, filter string, from, to int) ([]LogSourceGroup, error) {
-	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, filter, from, to, nil, nil)
+	req, err := c.client.requestHelp(http.MethodGet, logSourceGroupAPIPrefix, fields, filter, from, to, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (c *LogSourceGroupService) Get(ctx context.Context, fields, filter string, 
 
 // GetByID returns Log Source Group of the current QRadar installation by ID.
 func (c *LogSourceGroupService) GetByID(ctx context.Context, fields string, id int) (*LogSourceGroup, error) {
-	req, err := c.client.requestHelp(http.MethodGet, logSourceTypeAPIPrefix, fields, "", 0, 0, &id, nil)
+	req, err := c.client.requestHelp(http.MethodGet, logSourceGroupAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *LogSourceGroupService) GetByID(ctx context.Context, fields string, id i
 
 // Create creates Log Source Group in the current QRadar installation.
 func (c *LogSourceGroupService) Create(ctx context.Context, fields string, data interface{}) (*LogSourceGroup, error) {
-	req, err := c.client.requestHelp(http.MethodPost, logSourceTypeAPIPrefix, fields, "", 0, 0, nil, data)
+	req, err := c.client.requestHelp(http.MethodPost, logSourceGroupAPIPrefix, fields, "", 0, 0, nil, data)
 	if err != nil {
 		return nil, err
 	}

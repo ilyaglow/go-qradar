@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -58,6 +59,7 @@ type Client struct {
 	Ariel                 *ArielService
 	BuildingBlock         *BuildingBlockService
 	BuildingBlockWithData *BuildingBlockWithDataService
+	EventCollector        *EventCollectorService
 	Offense               *OffenseService
 	OffenseType           *OffenseTypeService
 	Domain                *DomainService
@@ -79,6 +81,7 @@ type Client struct {
 	LogSourceExtension *LogSourceExtensionService
 	LogSourceType      *LogSourceTypeService
 	LogSourceGroup     *LogSourceGroupService
+	LogSource          *LogSourceService
 
 	ReferenceMapOfSets *ReferenceMapOfSetsService
 	ReferenceMap       *ReferenceMapService
@@ -107,6 +110,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.Ariel = (*ArielService)(&c.common)
 	c.BuildingBlock = (*BuildingBlockService)(&c.common)
 	c.BuildingBlockWithData = (*BuildingBlockWithDataService)(&c.common)
+	c.EventCollector = (*EventCollectorService)(&c.common)
 	c.Offense = (*OffenseService)(&c.common)
 	c.OffenseType = (*OffenseTypeService)(&c.common)
 	c.Domain = (*DomainService)(&c.common)
@@ -123,6 +127,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.LogSourceExtension = (*LogSourceExtensionService)(&c.common)
 	c.LogSourceType = (*LogSourceTypeService)(&c.common)
 	c.LogSourceGroup = (*LogSourceGroupService)(&c.common)
+	c.LogSource = (*LogSourceService)(&c.common)
 	c.LowLevelCategory = (*LowLevelCategoryService)(&c.common)
 	c.HighLevelCategory = (*HighLevelCategoryService)(&c.common)
 	c.Tenant = (*TenantService)(&c.common)
@@ -207,6 +212,15 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		if err != nil {
 			return nil, err
 		}
+
+		// QRadar reference_data API errors if json has a trailing new line
+		if strings.HasPrefix(urlStr, "api/reference_data") && strings.Contains(urlStr, "/bulk_load/") {
+			bs, err := ioutil.ReadAll(buf)
+			if err != nil {
+				return nil, err
+			}
+			buf = bytes.NewBuffer(bs[:len(bs)-1])
+		}
 	}
 
 	req, err := http.NewRequest(method, u.String(), buf)
@@ -289,7 +303,8 @@ func CheckResponse(r *http.Response) error {
 		return nil
 	case http.StatusUnauthorized:
 		return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, ErrUnauthorized)
-	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusInternalServerError, http.StatusServiceUnavailable, http.StatusForbidden:
+	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusBadRequest,
+		http.StatusInternalServerError, http.StatusServiceUnavailable, http.StatusForbidden:
 		var v ErrorMessage
 		err := json.NewDecoder(r.Body).Decode(&v)
 		if err != nil {

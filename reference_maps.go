@@ -22,6 +22,8 @@ type ReferenceMap struct {
 	TimeToLive       *string `json:"time_to_live,omitempty"`
 	TimeoutType      *string `json:"timeout_type,omitempty"`
 	ValueLabel       *string `json:"value_label,omitempty"`
+
+	Data map[string]ReferenceSetData `json:"data,omitempty"`
 }
 
 // Get returns Reference maps of the current QRadar installation.
@@ -64,6 +66,34 @@ func (c *ReferenceMapService) Create(ctx context.Context, fields string, data *R
 
 	req.URL.RawQuery = q.Encode()
 
+	var result ReferenceMap
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetWithData returns Reference Map with data of the current QRadar installation.
+func (c *ReferenceMapService) GetWithData(ctx context.Context, fields, filter, name string, from, to int) (*ReferenceMap, error) {
+	req, err := c.client.requestHelp(http.MethodGet, referenceMapServiceAPIPrefix+"/"+name, fields, filter, from, to, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result ReferenceMap
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// BulkLoad uploads many values in QRadar's Reference Map
+func (c *ReferenceMapService) BulkLoad(ctx context.Context, fields, name string, data interface{}) (*ReferenceMap, error) {
+	req, err := c.client.requestHelp(http.MethodPost, referenceMapServiceAPIPrefix+"/bulk_load/"+name, fields, "", 0, 0, nil, data)
+	if err != nil {
+		return nil, err
+	}
 	var result ReferenceMap
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
