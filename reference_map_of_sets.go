@@ -23,7 +23,7 @@ type ReferenceMapOfSets struct {
 	TimeoutType      *string `json:"timeout_type,omitempty"`
 	ValueLabel       *string `json:"value_label,omitempty"`
 
-	Data map[string][]ReferenceSetData `json:"data,omitempty"`
+	Data map[string][]ReferenceData `json:"data,omitempty"`
 }
 
 // Get returns Reference maps of sets of the current QRadar installation.

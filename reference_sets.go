@@ -21,11 +21,11 @@ type ReferenceSet struct {
 	TimeToLive       *string `json:"time_to_live,omitempty"`
 	TimeoutType      *string `json:"timeout_type,omitempty"`
 
-	Data []ReferenceSetData `json:"data,omitempty"`
+	Data []ReferenceData `json:"data,omitempty"`
 }
 
-// ReferenceSetData represents data of Reference Set
-type ReferenceSetData struct {
+// ReferenceData represents entry of Reference Object
+type ReferenceData struct {
 	FirstSeen *int    `json:"first_seen,omitempty"`
 	LastSeen  *int    `json:"last_seen,omitempty"`
 	Source    *string `json:"source,omitempty"`

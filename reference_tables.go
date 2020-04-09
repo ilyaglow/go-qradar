@@ -20,6 +20,8 @@ type ReferenceTable struct {
 	NumberOfElements *int    `json:"number_of_elements,omitempty"`
 	TimeToLive       *string `json:"time_to_live,omitempty"`
 	TimeoutType      *string `json:"timeout_type,omitempty"`
+
+	Data map[string]map[string]ReferenceData `json:"data,omitempty"`
 }
 
 // Get returns Reference tables of the current QRadar installation.
@@ -62,6 +64,34 @@ func (c *ReferenceTableService) Create(ctx context.Context, fields string, data 
 
 	req.URL.RawQuery = q.Encode()
 
+	var result ReferenceTable
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetWithData returns Reference Table with data of the current QRadar installation.
+func (c *ReferenceTableService) GetWithData(ctx context.Context, fields, filter, name string, from, to int) (*ReferenceTable, error) {
+	req, err := c.client.requestHelp(http.MethodGet, referenceTableServiceAPIPrefix+"/"+name, fields, filter, from, to, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result ReferenceTable
+	_, err = c.client.Do(ctx, req, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// BulkLoad uploads many values in QRadar's Reference Table
+func (c *ReferenceTableService) BulkLoad(ctx context.Context, fields, name string, data interface{}) (*ReferenceTable, error) {
+	req, err := c.client.requestHelp(http.MethodPost, referenceTableServiceAPIPrefix+"/bulk_load/"+name, fields, "", 0, 0, nil, data)
+	if err != nil {
+		return nil, err
+	}
 	var result ReferenceTable
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
