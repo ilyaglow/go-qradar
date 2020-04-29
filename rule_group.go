@@ -5,32 +5,36 @@ import (
 	"net/http"
 )
 
-// LogSourceGroupService handles methods related to Log Source Groups of the QRadar API.
-type LogSourceGroupService service
+// RuleGroupService handles methods related to Rule Groups of the QRadar API.
+type RuleGroupService service
 
 const (
-	logSourceGroupAPIPrefix = "api/config/event_sources/log_source_management/log_source_groups"
+	ruleGroupAPIPrefix = "api/analytics/rule_groups"
 )
 
-// LogSourceGroup represents QRadar's Log Source Group.
-type LogSourceGroup struct {
-	ID               *int    `json:"id,omitempty"`
-	Name             *string `json:"name,omitempty"`
-	Description      *string `json:"description,omitempty"`
-	ParentID         *int    `json:"parent_id,omitempty"`
-	Owner            *string `json:"owner,omitempty"`
-	ModificationDate *int    `json:"modification_date,omitempty"`
-	Assignable       *bool   `json:"assignable,omitempty"`
-	ChildGroupIDs    []int   `json:"child_group_ids,omitempty"`
+// RuleGroup represents QRadar's Rule Group.
+
+type RuleGroup struct {
+	Owner        *string  `json:"owner"`
+	ModifiedTime *int     `json:"modified_time"`
+	Level        *int     `json:"level"`
+	Name         *string  `json:"name"`
+	Description  *string  `json:"description"`
+	ChildGroups  []int    `json:"child_groups"`
+	ID           *int     `json:"id"`
+	ChildItems   []string `json:"child_items"`
+	Type         *string  `json:"type"`
+	ParentID     *int     `json:"parent_id"`
 }
 
-// Get returns Log Source Groups of the current QRadar installation.
-func (c *LogSourceGroupService) Get(ctx context.Context, fields, filter string, from, to int) ([]LogSourceGroup, error) {
-	req, err := c.client.requestHelp(http.MethodGet, logSourceGroupAPIPrefix, fields, filter, from, to, nil, nil)
+// Get returns Rule Groups of the current QRadar installation.
+func (c *RuleGroupService) Get(ctx context.Context, fields, filter string, from, to int) ([]RuleGroup, error) {
+	req, err := c.client.requestHelp(http.MethodGet, ruleGroupAPIPrefix, fields, filter, from, to, nil, nil)
+
 	if err != nil {
 		return nil, err
 	}
-	var result []LogSourceGroup
+	var result []RuleGroup
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
 		return nil, err
@@ -38,27 +42,13 @@ func (c *LogSourceGroupService) Get(ctx context.Context, fields, filter string, 
 	return result, nil
 }
 
-// GetByID returns Log Source Group of the current QRadar installation by ID.
-func (c *LogSourceGroupService) GetByID(ctx context.Context, fields string, id int) (*LogSourceGroup, error) {
-	req, err := c.client.requestHelp(http.MethodGet, logSourceGroupAPIPrefix, fields, "", 0, 0, &id, nil)
+// GetByID returns Rule Group of the current QRadar installation by ID.
+func (c *RuleGroupService) GetByID(ctx context.Context, fields string, id int) (*RuleGroup, error) {
+	req, err := c.client.requestHelp(http.MethodGet, ruleGroupAPIPrefix, fields, "", 0, 0, &id, nil)
 	if err != nil {
 		return nil, err
 	}
-	var result LogSourceGroup
-	_, err = c.client.Do(ctx, req, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// Create creates Log Source Group in the current QRadar installation.
-func (c *LogSourceGroupService) Create(ctx context.Context, fields string, data interface{}) (*LogSourceGroup, error) {
-	req, err := c.client.requestHelp(http.MethodPost, logSourceGroupAPIPrefix, fields, "", 0, 0, nil, data)
-	if err != nil {
-		return nil, err
-	}
-	var result LogSourceGroup
+	var result RuleGroup
 	_, err = c.client.Do(ctx, req, &result)
 	if err != nil {
 		return nil, err
