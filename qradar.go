@@ -71,6 +71,8 @@ type Client struct {
 	Tenant                *TenantService
 	Rule                  *RuleService
 	RuleWithData          *RuleWithDataService
+	RuleGroup             *RuleGroupService
+	NetworkHierarchy      *NetworkHierarchyService
 
 	PropertyExpression     *PropertyExpressionService
 	PropertyJSONExpression *PropertyJSONExpressionService
@@ -119,6 +121,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.RegexProperty = (*RegexPropertyService)(&c.common)
 	c.Rule = (*RuleService)(&c.common)
 	c.RuleWithData = (*RuleWithDataService)(&c.common)
+	c.RuleGroup = (*RuleGroupService)(&c.common)
 	c.PropertyExpression = (*PropertyExpressionService)(&c.common)
 	c.PropertyJSONExpression = (*PropertyJSONExpressionService)(&c.common)
 	c.PropertyLEEFExpression = (*PropertyLEEFExpressionService)(&c.common)
@@ -135,6 +138,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.ReferenceMap = (*ReferenceMapService)(&c.common)
 	c.ReferenceSet = (*ReferenceSetService)(&c.common)
 	c.ReferenceTable = (*ReferenceTableService)(&c.common)
+	c.NetworkHierarchy = (*NetworkHierarchyService)(&c.common)
 
 	for _, f := range opts {
 		err := f(c)
