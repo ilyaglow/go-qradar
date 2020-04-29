@@ -71,6 +71,7 @@ type Client struct {
 	Tenant                *TenantService
 	Rule                  *RuleService
 	RuleWithData          *RuleWithDataService
+	NetworkHierarchy      *NetworkHierarchyService
 
 	PropertyExpression     *PropertyExpressionService
 	PropertyJSONExpression *PropertyJSONExpressionService
@@ -135,6 +136,7 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.ReferenceMap = (*ReferenceMapService)(&c.common)
 	c.ReferenceSet = (*ReferenceSetService)(&c.common)
 	c.ReferenceTable = (*ReferenceTableService)(&c.common)
+	c.NetworkHierarchy = (*NetworkHierarchyService)(&c.common)
 
 	for _, f := range opts {
 		err := f(c)
