@@ -52,13 +52,13 @@ func (c *LogSourceExtensionService) Create(ctx context.Context, fields string, d
 		return nil, err
 	}
 
-	//c.client.
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
-	w.Close()
-	w.FormDataContentType()
+
+	defer w.Close()
 
 	req.Header.Set("Allow-Hidden", "true")
+	// req.Header.Set("Content-Type", w.FormDataContentType()) //
 	req.Header.Set("Content-Type", "multipart/form-data")
 
 	var result LogSourceExtension
