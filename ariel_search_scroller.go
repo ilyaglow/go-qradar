@@ -44,11 +44,14 @@ func (a *ArielService) NewSearchResultsScroller(ctx context.Context, searchID st
 // Next returns true if an event is still available to be consumed by the
 // Result() method.
 func (s *SearchResultsScroller) Next(ctx context.Context) bool {
-	if len(s.events) < s.window && s.currIdx-s.startIdx == len(s.events) {
+	lastChunkOfData := len(s.events) < s.window+1 // because qradar usually returns s.window+1 events
+	lastEventIsRead := s.currIdx-s.startIdx == len(s.events)
+	if lastChunkOfData && lastEventIsRead {
 		return false
 	}
 
-	if s.currIdx-s.startIdx == len(s.events) && len(s.events) == s.window {
+	endOfChunk := s.currIdx-s.startIdx == len(s.events)
+	if endOfChunk {
 		s.startIdx += s.window
 		err := s.getEvents(ctx)
 		if err != nil {
