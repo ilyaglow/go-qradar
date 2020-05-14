@@ -36,7 +36,7 @@ func main() {
 		qradar.SetHTTPClient(&http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
+					InsecureSkipVerify: *insecure,
 				},
 			},
 		}),
