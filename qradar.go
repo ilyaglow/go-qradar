@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	libraryVersion    = "1.3.0"
+	libraryVersion    = "1.3.1"
 	defaultAPIVersion = "12.0"
 	userAgent         = "go-qradar/" + libraryVersion
 
@@ -303,7 +303,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*htt
 // CheckResponse checks the API response for errors.
 func CheckResponse(r *http.Response) error {
 	switch r.StatusCode {
-	case http.StatusOK, http.StatusCreated, http.StatusNoContent:
+	case http.StatusOK, http.StatusCreated, http.StatusAccepted, http.StatusNoContent:
 		return nil
 	case http.StatusUnauthorized:
 		return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, ErrUnauthorized)
