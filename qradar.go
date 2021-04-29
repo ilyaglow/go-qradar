@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	libraryVersion    = "1.3.1"
+	libraryVersion    = "1.3.2"
 	defaultAPIVersion = "12.0"
 	userAgent         = "go-qradar/" + libraryVersion
 
@@ -74,11 +74,13 @@ type Client struct {
 	RuleGroup             *RuleGroupService
 	NetworkHierarchy      *NetworkHierarchyService
 
-	PropertyExpression     *PropertyExpressionService
-	PropertyJSONExpression *PropertyJSONExpressionService
-	PropertyLEEFExpression *PropertyLEEFExpressionService
-	PropertyCEFExpression  *PropertyCEFExpressionService
-	ProperetyNVPExpression *PropertyNVPExpressionService
+	PropertyExpression            *PropertyExpressionService
+	PropertyJSONExpression        *PropertyJSONExpressionService
+	PropertyLEEFExpression        *PropertyLEEFExpressionService
+	PropertyCEFExpression         *PropertyCEFExpressionService
+	ProperetyNVPExpression        *PropertyNVPExpressionService
+	PropertyGenericListExpression *PropertyGenericListExpressionService
+	PropertyXMLExpression         *PropertyXMLExpressionService
 
 	LogSourceExtension *LogSourceExtensionService
 	LogSourceType      *LogSourceTypeService
@@ -124,9 +126,11 @@ func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
 	c.RuleGroup = (*RuleGroupService)(&c.common)
 	c.PropertyExpression = (*PropertyExpressionService)(&c.common)
 	c.PropertyJSONExpression = (*PropertyJSONExpressionService)(&c.common)
+	c.PropertyGenericListExpression = (*PropertyGenericListExpressionService)(&c.common)
 	c.PropertyLEEFExpression = (*PropertyLEEFExpressionService)(&c.common)
 	c.PropertyCEFExpression = (*PropertyCEFExpressionService)(&c.common)
 	c.ProperetyNVPExpression = (*PropertyNVPExpressionService)(&c.common)
+	c.PropertyXMLExpression = (*PropertyXMLExpressionService)(&c.common)
 	c.LogSourceExtension = (*LogSourceExtensionService)(&c.common)
 	c.LogSourceType = (*LogSourceTypeService)(&c.common)
 	c.LogSourceGroup = (*LogSourceGroupService)(&c.common)
