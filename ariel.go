@@ -137,3 +137,19 @@ func (a *ArielService) WaitForSearchID(ctx context.Context, searchID string, sta
 		}
 	}
 }
+
+// DeleteSearch returns a search status that has been deleted and the error.
+func (a *ArielService) DeleteSearch(ctx context.Context, searchID string) (string, error) {
+	req, err := a.client.NewRequest(http.MethodDelete, fmt.Sprintf("%s/%s", arielSearchAPIPrefix, searchID), nil)
+	if err != nil {
+		return "", err
+	}
+
+	var s Search
+	_, err = a.client.Do(ctx, req, &s)
+	if err != nil {
+		return "", err
+	}
+
+	return *s.Status, nil
+}
