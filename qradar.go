@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	libraryVersion    = "1.3.2"
+	libraryVersion    = "1.3.3"
 	defaultAPIVersion = "12.0"
 	userAgent         = "go-qradar/" + libraryVersion
 
